@@ -2,6 +2,7 @@ import gradio as gr
 import json
 import os
 import requests
+import argparse
 import traceback
 from pathlib import Path
 
@@ -74,6 +75,25 @@ class APIController:
 # Initialisation du contrôleur
 controller = APIController()
 
+# parse boolean values
+def str2bool(value):
+    if isinstance(value, bool):
+        return value
+    if value.lower() in ('true', '1', 'yes', 'y'):
+        return True
+    elif value.lower() in ('false', '0', 'no', 'n'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError(f"Invalid boolean value: {value}")
+
+# argparser
+parser = argparse.ArgumentParser()
+parser.add_argument('--share', type=str2bool, default=False, nargs='?', const=True, help='Gradio share value')
+parser.add_argument('--server_name', type=str, default=None, help='Gradio server host')
+parser.add_argument('--server_port', type=int, default=7800, help='Gradio server port')
+
+_args = parser.parse_args()
+
 # Interface Gradio
 with gr.Blocks(title="API Controller") as app:
     gr.Markdown("# API Controller")
@@ -128,5 +148,11 @@ with gr.Blocks(title="API Controller") as app:
     save_btn.click(save_api, [api_name, api_url, api_request], [save_status])
     execute_btn.click(execute_api, [recording_dropdown], [status_label, execution_log, debug_btn, debug_log])
 
+
+
 if __name__ == "__main__":
-    app.launch()
+    app.launch(
+        share=_args.share,
+        server_name=_args.server_name,
+        server_port=_args.server_port
+        )
