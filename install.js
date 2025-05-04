@@ -1,29 +1,22 @@
-const path = require('path')
-
 module.exports = {
   run: [{
     method: "shell.run",
     params: {
+      venv: "env",
       message: [
-        "python -m venv env",
-        "env/Scripts/python -m pip install --upgrade pip",
-        "env/Scripts/pip install gradio requests"
+        "python -m pip install --upgrade pip",
+        "uv pip install gradio requests"
       ]
     }
   }, {
-    method: "fs.mkdir",
+    method: "shell.run",
     params: {
-      path: "recordings"
+      message: "mkdir recordings"
     }
   }, {
     method: "notify",
     params: {
       html: "Installation terminée! Vous pouvez maintenant lancer l'application."
-    }
-  }, {
-    method: "browser.open",
-    params: {
-      uri: "launch.js"
     }
   }]
 }
